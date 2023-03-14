@@ -1,7 +1,7 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.encoding import smart_str
 
-from ads.models import Category, Ad
+from ads.models import Category, Ad, Selection
 from rest_framework import serializers
 
 from users.models import User
@@ -28,6 +28,17 @@ class AdListSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class AdDetailSerializer(serializers.ModelSerializer):
+    author = serializers.SlugRelatedField(
+        slug_field='first_name',
+        read_only=True,
+    )
+
+    class Meta:
+        model = Ad
+        fields = ["id", "name", "author_id", "author", "price", "description", "is_published", "category_id", "image"]
+
+
 class CreatableSlugRelatedField(serializers.SlugRelatedField):
 
     def to_internal_value(self, data):
@@ -41,20 +52,9 @@ class CreatableSlugRelatedField(serializers.SlugRelatedField):
 
 
 class AdPostSerializer(serializers.ModelSerializer):
-    category = CreatableSlugRelatedField(
-        queryset=Category.objects.all(),
-        many=True,
-        slug_field='name',
-    )
-    author = serializers.SlugRelatedField(
-        queryset=User.objects.all(),
-        slug_field='username'
-    )
-    id = serializers.IntegerField(required=False)
-
     class Meta:
         model = Ad
-        fields = ('id', 'name', 'author', 'price', 'description', 'is_published', 'image', 'category')
+        fields = '__all__'
 
 
 class PatchModelSerializer(serializers.ModelSerializer):
@@ -77,4 +77,24 @@ class AdUpdateSerializer(PatchModelSerializer):
 
     class Meta:
         model = Ad
+        fields = '__all__'
+
+
+class SelectionListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Selection
+        fields = ["id", "name"]
+
+
+class SelectionDetailSerializer(serializers.ModelSerializer):
+    items = AdListSerializer(many=True)
+
+    class Meta:
+        model = Selection
+        fields = '__all__'
+
+
+class SelectionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Selection
         fields = '__all__'
