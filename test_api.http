@@ -1,0 +1,76 @@
+### Создадим пользователя
+
+POST http://127.0.0.1:8000/user/create/
+Accept: application/json
+Content-Type: application/json
+
+{
+	"username": "user444",
+	"password": "password"
+}
+
+
+### Получим токен
+
+POST http://127.0.0.1:8000/user/token/
+Accept: application/json
+Content-Type: application/json
+
+{
+	"username": "user444",
+	"password": "password"
+}
+
+
+### Получаем новую пару refresh & access tokens
+
+POST http://127.0.0.1:8000/user/token/
+Accept: application/json
+Content-Type: application/json
+
+{
+	"username": "user444",
+	"password": "password",
+    "access": "eyJhbGciOiJIUzI1NiIsInR5..."
+}
+
+
+### Доступ к детальной информации в Auth вставляем access токен
+
+GET http://127.0.0.1:8000/ad/2/
+
+
+### Делаем подборку объявлений для авторизованного пользователя (в Auth вставляем access токен)
+
+GET http://127.0.0.1:8000/ad/selection/create/
+Accept: application/json
+Content-Type: application/json
+
+{
+	"name": "Подборка Васи",
+	"owner": 1,
+	"items": [18]
+}
+
+
+### Просматриваеи подборки объявлений (Могут все пользователи)
+
+GET http://127.0.0.1:8000/ad/selection/1/
+
+
+### Изменяем подбрку пользователя (в Auth вставляем access токен)
+
+PATCH http://127.0.0.1:8000/selection/1/update/
+Accept: application/json
+Content-Type: application/json
+
+{
+	"name": "Подборка Васи",
+	"owner": 19,
+	"items": [18, 19]
+}
+
+
+### Удаляем подборку пользователя (в Auth вставляем access токен)
+
+DELETE http://127.0.0.1:8000/ad/selection/1/delete/
